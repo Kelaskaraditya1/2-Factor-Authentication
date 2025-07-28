@@ -30,19 +30,24 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain getSecurityFilterChain(HttpSecurity httpSecurity) throws Exception{
-        return httpSecurity.authorizeHttpRequests(request->
-                request.requestMatchers(HttpMethod.GET,"/employee/get-employees").hasRole(Keys.EMPLOYEE)
-                        .requestMatchers(HttpMethod.GET,"/employee/get-employee/**").hasRole(Keys.EMPLOYEE)
-                        .requestMatchers(HttpMethod.POST,"/employee/add-employee").hasRole(Keys.MANAGER)
-                        .requestMatchers(HttpMethod.PUT,"/employee/update-employee/**").hasRole(Keys.MANAGER)
-                        .requestMatchers(HttpMethod.DELETE,"/employee/delete-employee/**").hasRole(Keys.ADMIN))
-                .csrf(csrf->csrf.disable())
-                .cors(cors->cors.disable())
-                .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .build();
+    public SecurityFilterChain getSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers(HttpMethod.GET, "/employee/get-employees").hasRole(Keys.EMPLOYEE)
+                        .requestMatchers(HttpMethod.GET, "/employee/get-employee/**").hasRole(Keys.EMPLOYEE)
+                        .requestMatchers(HttpMethod.POST, "/employee/add-employee").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/employee/update-employee/**").hasRole(Keys.MANAGER)
+                        .requestMatchers(HttpMethod.DELETE, "/employee/delete-employee/**").hasRole(Keys.ADMIN)
+                        .anyRequest().authenticated()
+                )
+                .httpBasic(Customizer.withDefaults());
+
+        return httpSecurity.build();
     }
+
 
     @Bean
     public AuthenticationProvider getAuthenticationProvider(){

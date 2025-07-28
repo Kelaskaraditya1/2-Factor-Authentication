@@ -23,6 +23,18 @@ public class EmployeeController {
     @Autowired
     public EmployeeService employeeService;
 
+    @GetMapping("/greetings")
+    public ResponseEntity<?> greetings(){
+
+        HashMap<String,Object> response = new HashMap<>();
+
+        response.put(Keys.TIME_STAMP, Instant.now());
+        response.put(Keys.STATUS, HttpStatus.OK.value());
+        response.put(Keys.MESSAGE,"Greetings,I am Optimus Prime!!");
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @GetMapping("/get-employees")
     public ResponseEntity<?> getAllEmployees(){
 
@@ -33,7 +45,7 @@ public class EmployeeController {
             response.put(Keys.TIME_STAMP, Instant.now());
             response.put(Keys.STATUS, HttpStatus.OK.value());
             response.put(Keys.MESSAGE,"Employees found successfully!!");
-            response.put(Keys.BODY,response);
+            response.put(Keys.BODY,employeeList);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }else {
             response.put(Keys.TIME_STAMP, Instant.now());
@@ -112,6 +124,7 @@ public class EmployeeController {
         if(employee1!=null){
             response.put(Keys.TIME_STAMP,Instant.now());
             response.put(Keys.STATUS,HttpStatus.OK.value());
+            response.put(Keys.BODY,employee1);
             response.put(Keys.MESSAGE,"Employees updates successfully!!");
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }else{
