@@ -1,23 +1,60 @@
 package com.starkIndustries.RoleBasedAuthorization.api.role;
 
+import com.starkIndustries.RoleBasedAuthorization.api.permissions.Permissions;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-@Data
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import static com.starkIndustries.RoleBasedAuthorization.api.permissions.Permissions.*;
+
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Entity
-public class Role {
+public enum Role {
+    USER(
+            Collections.emptySet()
+    ),
+    ADMIN(
+            Set.of(
+                    ADMIN_CREATE,
+                    ADMIN_READ,
+                    ADMIN_UPDATE,
+                    ADMIN_DELETE,
+                    MANAGER_READ,
+                    MANAGER_CREATE,
+                    MANAGER_DELETE,
+                    MANAGER_UPDATE
+            )
+    ),
+    MANAGER(
+            Set.of(
+                    MANAGER_READ,
+                    MANAGER_CREATE,
+                    MANAGER_DELETE,
+                    MANAGER_UPDATE
+            )
+    );
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long roleId;
+    private Set<Permissions> permissionsSet;
 
-    private String name;
+    public List<SimpleGrantedAuthority> getAuthorities(){
+
+        var authorities = getPermissionsSet().stream()
+                .map(authority->
+                        new SimpleGrantedAuthority(authority.name()))
+                .toList();
+
+        authorities.add(new SimpleGrantedAuthority("ROLE_"+this.name()));  // By Default
+        return authorities;
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.starkIndustries.RoleBasedAuthorization.api.modles;
 
+import com.starkIndustries.RoleBasedAuthorization.api.role.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,4 +27,6 @@ public class Employee {
     private String username;
 
     private String password;
+
+    private Role role;
 }

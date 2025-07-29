@@ -1,7 +1,7 @@
 package com.starkIndustries.RoleBasedAuthorization.api.controller;
 
+import com.starkIndustries.RoleBasedAuthorization.api.dto.request.LoginRequestDto;
 import com.starkIndustries.RoleBasedAuthorization.api.modles.Employee;
-import com.starkIndustries.RoleBasedAuthorization.api.modles.User;
 import com.starkIndustries.RoleBasedAuthorization.api.service.EmployeeService;
 import com.starkIndustries.RoleBasedAuthorization.keys.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.*;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/employee")
@@ -133,5 +131,28 @@ public class EmployeeController {
             response.put(Keys.MESSAGE,"Failed to update Employee!!");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update Employee!!");
         }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto){
+
+        Map<String,Object> response = new HashMap<>();
+
+        Employee employee = this.employeeService.login(loginRequestDto);
+        if(employee!=null){
+            response.put(Keys.TIME_STAMP,Instant.now());
+            response.put(Keys.STATUS,HttpStatus.OK.value());
+            response.put(Keys.MESSAGE,"Login Successful!!");
+            response.put(Keys.BODY,employee);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }else{
+            response.put(Keys.TIME_STAMP, Instant.now());
+            response.put(Keys.STATUS, HttpStatus.UNAUTHORIZED.value());
+            response.put(Keys.MESSAGE,"Login Failed!!");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login Failed!!");
+        }
+
+
+
     }
 }

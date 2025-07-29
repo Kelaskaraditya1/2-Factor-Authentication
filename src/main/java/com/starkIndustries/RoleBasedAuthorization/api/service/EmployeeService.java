@@ -1,9 +1,15 @@
 package com.starkIndustries.RoleBasedAuthorization.api.service;
 
+import com.starkIndustries.RoleBasedAuthorization.api.dto.request.LoginRequestDto;
 import com.starkIndustries.RoleBasedAuthorization.api.modles.Employee;
 import com.starkIndustries.RoleBasedAuthorization.api.repository.EmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
+import org.springframework.boot.autoconfigure.pulsar.PulsarProperties;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +24,9 @@ public class EmployeeService {
 
     @Autowired
     public BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    public AuthenticationManager authenticationManager;
 
     public List<Employee> getEmployees(){
         return this.employeeRepository.findAll();
@@ -53,6 +62,23 @@ public class EmployeeService {
             employee1.setName(employee.getName());
             employee1.setUsername(employee.getUsername());
             return this.employeeRepository.save(employee1);
+        }
+        return null;
+    }
+
+    public Employee login(LoginRequestDto loginRequestDto){
+
+        Employee employee = this.employeeRepository.findByUsername(loginRequestDto.getUsername());
+
+        if(employee!=null){
+
+            Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    loginRequestDto.getUsername(),
+                    loginRequestDto.getPassword()
+            ));
+
+            if(authentication.isAuthenticated())
+                return employee;
         }
         return null;
     }
