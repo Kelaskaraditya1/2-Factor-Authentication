@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,6 +26,7 @@ import static javax.management.Query.and;
 
 @EnableWebSecurity
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfiguration {
 
     @Autowired
@@ -57,13 +59,13 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.DELETE,"/manager/delete-manager").hasAnyAuthority(Permissions.ADMIN_DELETE.name(),Permissions.MANAGER_DELETE.name())
 
                         // /admin/** is available for both Admin, the below allows for the url for both Admin.
-                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
-
-                        // The below url with HttpMethods allow both Admin for various permission
-                        .requestMatchers(HttpMethod.GET,"/admin/get-admin").hasAuthority(Permissions.ADMIN_READ.name())
-                        .requestMatchers(HttpMethod.POST,"/admin/post-admin").hasAuthority(Permissions.ADMIN_CREATE.name())
-                        .requestMatchers(HttpMethod.PUT,"/admin/update-admin").hasAuthority(Permissions.ADMIN_UPDATE.name())
-                        .requestMatchers(HttpMethod.DELETE,"/admin/delete-admin").hasAuthority(Permissions.ADMIN_DELETE.name())
+//                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
+//
+//                        // The below url with HttpMethods allow both Admin for various permission
+//                        .requestMatchers(HttpMethod.GET,"/admin/get-admin").hasAuthority(Permissions.ADMIN_READ.name())
+//                        .requestMatchers(HttpMethod.POST,"/admin/post-admin").hasAuthority(Permissions.ADMIN_CREATE.name())
+//                        .requestMatchers(HttpMethod.PUT,"/admin/update-admin").hasAuthority(Permissions.ADMIN_UPDATE.name())
+//                        .requestMatchers(HttpMethod.DELETE,"/admin/delete-admin").hasAuthority(Permissions.ADMIN_DELETE.name())
 
                         .anyRequest()
                         .authenticated())
