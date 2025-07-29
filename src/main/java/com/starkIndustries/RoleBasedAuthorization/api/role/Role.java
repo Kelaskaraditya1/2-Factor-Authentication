@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.starkIndustries.RoleBasedAuthorization.api.permissions.Permissions.*;
 
@@ -48,10 +49,10 @@ public enum Role {
 
     public List<SimpleGrantedAuthority> getAuthorities(){
 
-        var authorities = getPermissionsSet().stream()
+        List<SimpleGrantedAuthority> authorities = getPermissionsSet().stream()
                 .map(authority->
                         new SimpleGrantedAuthority(authority.name()))
-                .toList();
+                        .collect(Collectors.toList());
 
         authorities.add(new SimpleGrantedAuthority("ROLE_"+this.name()));  // By Default
         return authorities;

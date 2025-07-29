@@ -1,5 +1,7 @@
 package com.starkIndustries.RoleBasedAuthorization.security.configuration;
 
+import com.starkIndustries.RoleBasedAuthorization.api.permissions.Permissions;
+import com.starkIndustries.RoleBasedAuthorization.api.role.Role;
 import com.starkIndustries.RoleBasedAuthorization.keys.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -44,6 +46,25 @@ public class SecurityConfiguration {
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request->request.requestMatchers("/employee/login/**","/employee/add-employee/**")
                         .permitAll()
+
+                        // /manager/** is available for both Admin and Manager, the below allows for the url for both Admin and Manager
+                        .requestMatchers("/manager/**").hasAnyRole(Role.ADMIN.name(),Role.MANAGER.name())
+
+                        // The below url with HttpMethods allow both Admin and Manager, for various permission
+                        .requestMatchers(HttpMethod.GET,"/manager/get-manager").hasAnyAuthority(Permissions.ADMIN_READ.name(),Permissions.MANAGER_READ.name())
+                        .requestMatchers(HttpMethod.POST,"/manager/post-manager").hasAnyAuthority(Permissions.ADMIN_CREATE.name(),Permissions.MANAGER_CREATE.name())
+                        .requestMatchers(HttpMethod.PUT,"/manager/update-manager").hasAnyAuthority(Permissions.ADMIN_UPDATE.name(),Permissions.MANAGER_UPDATE.name())
+                        .requestMatchers(HttpMethod.DELETE,"/manager/delete-manager").hasAnyAuthority(Permissions.ADMIN_DELETE.name(),Permissions.MANAGER_DELETE.name())
+
+                        // /admin/** is available for both Admin, the below allows for the url for both Admin.
+                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
+
+                        // The below url with HttpMethods allow both Admin for various permission
+                        .requestMatchers(HttpMethod.GET,"/admin/get-admin").hasAuthority(Permissions.ADMIN_READ.name())
+                        .requestMatchers(HttpMethod.POST,"/admin/post-admin").hasAuthority(Permissions.ADMIN_CREATE.name())
+                        .requestMatchers(HttpMethod.PUT,"/admin/update-admin").hasAuthority(Permissions.ADMIN_UPDATE.name())
+                        .requestMatchers(HttpMethod.DELETE,"/admin/delete-admin").hasAuthority(Permissions.ADMIN_DELETE.name())
+
                         .anyRequest()
                         .authenticated())
                 .build();
