@@ -1,6 +1,7 @@
 package com.starkIndustries.RoleBasedAuthorization.auth.service;
 
 import com.starkIndustries.RoleBasedAuthorization.auth.dto.request.LoginRequestDto;
+import com.starkIndustries.RoleBasedAuthorization.auth.dto.response.LoginResponse;
 import com.starkIndustries.RoleBasedAuthorization.auth.modles.Employee;
 import com.starkIndustries.RoleBasedAuthorization.auth.repository.EmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -67,7 +68,7 @@ public class EmployeeService {
         return null;
     }
 
-    public Employee login(LoginRequestDto loginRequestDto){
+    public LoginResponse login(LoginRequestDto loginRequestDto){
 
         Employee employee = this.employeeRepository.findByUsername(loginRequestDto.getUsername());
 
@@ -78,8 +79,11 @@ public class EmployeeService {
                     loginRequestDto.getPassword()));
 
             if(authentication.isAuthenticated()){
-                employee.setAccessToken(this.jwtService.getJwtToken(employee));
-                return employee;
+                LoginResponse loginResponse = new LoginResponse();
+                loginResponse.setEmployee(employee);
+                loginResponse.setJwtToken(this.jwtService.getJwtToken(employee));
+                loginResponse.setRefreshToken(this.jwtService.getRefreshToken(employee));
+                return loginResponse;
             }else
                 return null;
         }

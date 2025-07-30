@@ -28,5 +28,4 @@ public class Employee {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    private String accessToken;
 }

@@ -1,14 +1,19 @@
 package com.starkIndustries.RoleBasedAuthorization.auth.controller;
 
 import com.starkIndustries.RoleBasedAuthorization.auth.dto.request.LoginRequestDto;
+import com.starkIndustries.RoleBasedAuthorization.auth.dto.response.LoginResponse;
 import com.starkIndustries.RoleBasedAuthorization.auth.modles.Employee;
 import com.starkIndustries.RoleBasedAuthorization.auth.service.EmployeeService;
+import com.starkIndustries.RoleBasedAuthorization.auth.service.JwtService;
 import com.starkIndustries.RoleBasedAuthorization.keys.Keys;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +25,9 @@ public class EmployeeController {
 
     @Autowired
     public EmployeeService employeeService;
+
+    @Autowired
+    public JwtService jwtService;
 
     @GetMapping("/greetings")
     public ResponseEntity<?> greetings(){
@@ -138,12 +146,12 @@ public class EmployeeController {
 
         Map<String,Object> response = new HashMap<>();
 
-        Employee employee = this.employeeService.login(loginRequestDto);
-        if(employee!=null){
+        LoginResponse loginResponse = this.employeeService.login(loginRequestDto);
+        if(loginResponse!=null){
             response.put(Keys.TIME_STAMP,Instant.now());
             response.put(Keys.STATUS,HttpStatus.OK.value());
             response.put(Keys.MESSAGE,"Login Successful!!");
-            response.put(Keys.BODY,employee);
+            response.put(Keys.BODY,loginResponse);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }else{
             response.put(Keys.TIME_STAMP, Instant.now());
@@ -152,7 +160,26 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login Failed!!");
         }
 
+    }
 
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse) throws IOException {
+        LoginResponse loginResponse = this.jwtService.getRefreshToken(httpServletRequest,httpServletResponse);
+
+        Map<String,Object> response = new HashMap<>();
+
+        if(loginResponse!=null){
+            response.put(Keys.TIME_STAMP,Instant.now());
+            response.put(Keys.STATUS,HttpStatus.OK);
+            response.put(Keys.MESSAGE,"Token refreshed successfully!!");
+            response.put(Keys.BODY,loginResponse);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }else{
+            response.put(Keys.TIME_STAMP,Instant.now());
+            response.put(Keys.STATUS,HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put(Keys.MESSAGE,"Failed to refresh!!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
 
     }
 }
