@@ -1,8 +1,8 @@
-package com.starkIndustries.RoleBasedAuthorization.api.service;
+package com.starkIndustries.RoleBasedAuthorization.auth.service;
 
-import com.starkIndustries.RoleBasedAuthorization.api.modles.Employee;
-import com.starkIndustries.RoleBasedAuthorization.api.modles.UserPrinciple;
-import com.starkIndustries.RoleBasedAuthorization.api.repository.EmployeeRepository;
+import com.starkIndustries.RoleBasedAuthorization.auth.modles.Employee;
+import com.starkIndustries.RoleBasedAuthorization.auth.modles.UserPrinciple;
+import com.starkIndustries.RoleBasedAuthorization.auth.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

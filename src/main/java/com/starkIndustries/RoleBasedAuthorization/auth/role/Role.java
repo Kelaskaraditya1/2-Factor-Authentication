@@ -1,20 +1,15 @@
-package com.starkIndustries.RoleBasedAuthorization.api.role;
+package com.starkIndustries.RoleBasedAuthorization.auth.role;
 
-import com.starkIndustries.RoleBasedAuthorization.api.permissions.Permissions;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.starkIndustries.RoleBasedAuthorization.auth.permissions.Permissions;
 import lombok.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.starkIndustries.RoleBasedAuthorization.api.permissions.Permissions.*;
+import static com.starkIndustries.RoleBasedAuthorization.auth.permissions.Permissions.*;
 
 @Getter
 @AllArgsConstructor
@@ -50,8 +45,8 @@ public enum Role {
     public List<SimpleGrantedAuthority> getAuthorities(){
 
         List<SimpleGrantedAuthority> authorities = getPermissionsSet().stream()
-                .map(authority->
-                        new SimpleGrantedAuthority(authority.getPermissions()))
+                .map(permissions->
+                        new SimpleGrantedAuthority(permissions.getPermissions()))
                         .collect(Collectors.toList());
 
         authorities.add(new SimpleGrantedAuthority("ROLE_"+this.name()));  // By Default

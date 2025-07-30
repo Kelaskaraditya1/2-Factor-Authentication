@@ -1,6 +1,6 @@
-package com.starkIndustries.RoleBasedAuthorization.api.modles;
+package com.starkIndustries.RoleBasedAuthorization.auth.modles;
 
-import com.starkIndustries.RoleBasedAuthorization.api.role.Role;
+import com.starkIndustries.RoleBasedAuthorization.auth.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,4 +27,6 @@ public class Employee {
 
     @Enumerated(value = EnumType.STRING)
     private Role role;
+
+    private String accessToken;
 }

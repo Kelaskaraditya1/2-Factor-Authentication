@@ -1,8 +1,8 @@
-package com.starkIndustries.RoleBasedAuthorization.api.controller;
+package com.starkIndustries.RoleBasedAuthorization.auth.controller;
 
-import com.starkIndustries.RoleBasedAuthorization.api.dto.request.LoginRequestDto;
-import com.starkIndustries.RoleBasedAuthorization.api.modles.Employee;
-import com.starkIndustries.RoleBasedAuthorization.api.service.EmployeeService;
+import com.starkIndustries.RoleBasedAuthorization.auth.dto.request.LoginRequestDto;
+import com.starkIndustries.RoleBasedAuthorization.auth.modles.Employee;
+import com.starkIndustries.RoleBasedAuthorization.auth.service.EmployeeService;
 import com.starkIndustries.RoleBasedAuthorization.keys.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

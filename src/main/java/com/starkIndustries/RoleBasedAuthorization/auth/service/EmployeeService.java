@@ -1,12 +1,10 @@
-package com.starkIndustries.RoleBasedAuthorization.api.service;
+package com.starkIndustries.RoleBasedAuthorization.auth.service;
 
-import com.starkIndustries.RoleBasedAuthorization.api.dto.request.LoginRequestDto;
-import com.starkIndustries.RoleBasedAuthorization.api.modles.Employee;
-import com.starkIndustries.RoleBasedAuthorization.api.repository.EmployeeRepository;
+import com.starkIndustries.RoleBasedAuthorization.auth.dto.request.LoginRequestDto;
+import com.starkIndustries.RoleBasedAuthorization.auth.modles.Employee;
+import com.starkIndustries.RoleBasedAuthorization.auth.repository.EmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
-import org.springframework.boot.autoconfigure.pulsar.PulsarProperties;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +25,9 @@ public class EmployeeService {
 
     @Autowired
     public AuthenticationManager authenticationManager;
+
+    @Autowired
+    public JwtService jwtService;
 
     public List<Employee> getEmployees(){
         return this.employeeRepository.findAll();
@@ -74,11 +75,13 @@ public class EmployeeService {
 
             Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginRequestDto.getUsername(),
-                    loginRequestDto.getPassword()
-            ));
+                    loginRequestDto.getPassword()));
 
-            if(authentication.isAuthenticated())
+            if(authentication.isAuthenticated()){
+                employee.setAccessToken(this.jwtService.getJwtToken(employee));
                 return employee;
+            }else
+                return null;
         }
         return null;
     }

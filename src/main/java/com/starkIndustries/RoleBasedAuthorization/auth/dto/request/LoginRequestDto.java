@@ -1,4 +1,4 @@
-package com.starkIndustries.RoleBasedAuthorization.api.dto.request;
+package com.starkIndustries.RoleBasedAuthorization.auth.dto.request;
 
 import lombok.*;
 

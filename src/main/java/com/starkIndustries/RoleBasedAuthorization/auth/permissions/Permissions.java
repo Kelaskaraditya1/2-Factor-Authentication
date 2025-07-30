@@ -1,4 +1,4 @@
-package com.starkIndustries.RoleBasedAuthorization.api.permissions;
+package com.starkIndustries.RoleBasedAuthorization.auth.permissions;
 
 import lombok.*;
 

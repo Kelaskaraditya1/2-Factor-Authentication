@@ -1,4 +1,4 @@
-package com.starkIndustries.RoleBasedAuthorization.api.controller;
+package com.starkIndustries.RoleBasedAuthorization.auth.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
