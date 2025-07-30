@@ -2,6 +2,7 @@ package com.starkIndustries.RoleBasedAuthorization.auth.service;
 
 import com.starkIndustries.RoleBasedAuthorization.auth.dto.request.LoginRequestDto;
 import com.starkIndustries.RoleBasedAuthorization.auth.dto.response.LoginResponse;
+import com.starkIndustries.RoleBasedAuthorization.auth.dto.response.SignupResponse;
 import com.starkIndustries.RoleBasedAuthorization.auth.modles.Employee;
 import com.starkIndustries.RoleBasedAuthorization.auth.repository.EmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -34,7 +36,7 @@ public class EmployeeService {
         return this.employeeRepository.findAll();
     }
 
-    public Employee getEmployeeById(Long empId){
+    public Employee getEmployeeById(String empId){
         if(this.employeeRepository.existsById(empId)){
             Employee employee = this.employeeRepository.findById(empId).get();
             log.error("Employee:{}",employee);
@@ -43,12 +45,24 @@ public class EmployeeService {
         return null;
     }
 
-    public Employee addEmployee(Employee employee){
-        employee.setPassword(this.bCryptPasswordEncoder.encode(employee.getPassword()));
-        return this.employeeRepository.save(employee);
+    public SignupResponse addEmployee(Employee employee){
+
+        String empId = UUID.randomUUID().toString();
+        if(!this.employeeRepository.existsById(empId)){
+
+            SignupResponse signupResponse = new SignupResponse();
+            employee.setEmpId(empId);
+            employee.setPassword(this.bCryptPasswordEncoder.encode(employee.getPassword()));
+            signupResponse.setEmployee(employee);
+            signupResponse.setJwtToken(this.jwtService.getJwtToken(employee));
+            signupResponse.setRefreshToken(this.jwtService.getRefreshToken(employee));
+            this.employeeRepository.save(employee);
+            return signupResponse;
+        }
+        return null;
     }
 
-    public boolean deleteEmployee(Long empID){
+    public boolean deleteEmployee(String empID){
         if(this.employeeRepository.existsById(empID)){
             this.employeeRepository.deleteById(empID);
             return true;
@@ -56,7 +70,7 @@ public class EmployeeService {
         return false;
     }
 
-    public Employee updateEmployee(Long empId,Employee employee){
+    public Employee updateEmployee(String empId,Employee employee){
 
         if(this.employeeRepository.existsById(empId)){
             Employee employee1= this.employeeRepository.findById(empId).get();

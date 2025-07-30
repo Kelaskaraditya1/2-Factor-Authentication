@@ -2,6 +2,7 @@ package com.starkIndustries.RoleBasedAuthorization.auth.controller;
 
 import com.starkIndustries.RoleBasedAuthorization.auth.dto.request.LoginRequestDto;
 import com.starkIndustries.RoleBasedAuthorization.auth.dto.response.LoginResponse;
+import com.starkIndustries.RoleBasedAuthorization.auth.dto.response.SignupResponse;
 import com.starkIndustries.RoleBasedAuthorization.auth.modles.Employee;
 import com.starkIndustries.RoleBasedAuthorization.auth.service.EmployeeService;
 import com.starkIndustries.RoleBasedAuthorization.auth.service.JwtService;
@@ -62,7 +63,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/get-employee/{empId}")
-    public ResponseEntity<?> getEmployeeById(@PathVariable("empId")  Long empId){
+    public ResponseEntity<?> getEmployeeById(@PathVariable("empId")  String empId){
 
         Employee employee = this.employeeService.getEmployeeById(empId);
 
@@ -85,15 +86,15 @@ public class EmployeeController {
     @PostMapping("/add-employee")
     public ResponseEntity<?> addEmployee(@RequestBody Employee employee){
 
-        Employee employee1 = this.employeeService.addEmployee(employee);
+        SignupResponse signupResponse = this.employeeService.addEmployee(employee);
 
         Map<String,Object> response = new HashMap<>();
 
-        if(employee1!=null){
+        if(signupResponse!=null){
             response.put(Keys.TIME_STAMP,Instant.now());
             response.put(Keys.STATUS,HttpStatus.OK.value());
             response.put(Keys.MESSAGE,"Employees added successfully!!");
-            response.put(Keys.BODY,employee1);
+            response.put(Keys.BODY,signupResponse);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }else {
             response.put(Keys.TIME_STAMP, Instant.now());
@@ -104,7 +105,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/delete-employee/{empId}")
-    public ResponseEntity<?> deleteEmployee(@PathVariable("empId") Long empId){
+    public ResponseEntity<?> deleteEmployee(@PathVariable("empId") String empId){
 
         Map<String,Object> response = new HashMap<>();
 
@@ -122,7 +123,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/update-employee/{empId}")
-    public ResponseEntity<?> updateEmployee(@PathVariable("empId") Long empId,@RequestBody Employee employee){
+    public ResponseEntity<?> updateEmployee(@PathVariable("empId") String empId,@RequestBody Employee employee){
 
         Employee employee1 = this.employeeService.updateEmployee(empId,employee);
         Map<String,Object> response = new HashMap<>();
