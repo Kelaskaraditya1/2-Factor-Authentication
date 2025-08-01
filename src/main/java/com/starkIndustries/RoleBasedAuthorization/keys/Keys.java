@@ -10,6 +10,8 @@ public class Keys {
     public static final String EMPLOYEE="EMPLOYEE";
     public static final String MANAGER="MANAGER";
     public static final String ADMIN="ADMIN";
-
     public static final String HMAC_SHA_256="HmacSHA256";
+    public static final String LABEL="WhatsApp";
+    public static final String ISSUER="Aditya Sandeep Kelaskar";
+    public static final String QR_CODE_URL="QR_CODE_URL";
 }

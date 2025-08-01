@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Entity
-public class Employee {
+public class AuthUser {
 
     @Id
     private String empId;
@@ -26,5 +26,9 @@ public class Employee {
 
     @Enumerated(value = EnumType.STRING)
     private Role role;
+
+    private boolean mfaEnabled;
+
+    private String secret;
 
 }

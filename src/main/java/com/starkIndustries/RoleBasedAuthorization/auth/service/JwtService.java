@@ -1,17 +1,13 @@
 package com.starkIndustries.RoleBasedAuthorization.auth.service;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.starkIndustries.RoleBasedAuthorization.auth.dto.response.LoginResponse;
-import com.starkIndustries.RoleBasedAuthorization.auth.modles.Employee;
-import com.starkIndustries.RoleBasedAuthorization.auth.modles.UserPrinciple;
-import com.starkIndustries.RoleBasedAuthorization.auth.repository.EmployeeRepository;
+import com.starkIndustries.RoleBasedAuthorization.auth.modles.AuthUser;
+import com.starkIndustries.RoleBasedAuthorization.auth.repository.AuthUserRepository;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.Request;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -27,14 +23,12 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 
-import static org.springframework.cache.interceptor.SimpleKeyGenerator.generateKey;
-
 @Slf4j
 @Service
 public class JwtService {
 
     @Autowired
-    public EmployeeRepository employeeRepository;
+    public AuthUserRepository authUserRepository;
 
     @Autowired
     public MyUserDetailService myUserDetailService;
@@ -60,23 +54,23 @@ public class JwtService {
 
     }
 
-    public String getJwtToken(Employee employee){
-        return buildToken(employee, (long) (1000*60));
+    public String getJwtToken(AuthUser authUser){
+        return buildToken(authUser, (long) (1000*60*60*24));
     }
 
-    public String getRefreshToken(Employee employee){
-        return buildToken(employee,refreshTokenExpiration);
+    public String getRefreshToken(AuthUser authUser){
+        return buildToken(authUser,refreshTokenExpiration);
     }
 
 
-    public String buildToken(Employee employee,Long expiration){
+    public String buildToken(AuthUser authUser, Long expiration){
 
         Map<String, Objects> claims = new HashMap<>();
 
         return Jwts.builder()
                 .claims()
                 .add(claims)
-                .subject(employee.getUsername())
+                .subject(authUser.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis()+expiration))
                 .and()
@@ -152,11 +146,11 @@ public class JwtService {
 
         if(username!=null){
 
-            Employee employee = this.employeeRepository.findByUsername(username);
+            AuthUser authUser = this.authUserRepository.findByUsername(username);
             UserDetails userDetails = this.myUserDetailService.loadUserByUsername(username);
             if(isTokenValid(refreshToken,userDetails)){
-                String accessToken = getJwtToken(employee);
-                loginResponse.setEmployee(employee);
+                String accessToken = getJwtToken(authUser);
+                loginResponse.setAuthUser(authUser);
                 loginResponse.setJwtToken(accessToken);
                 loginResponse.setRefreshToken(refreshToken);
 

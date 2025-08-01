@@ -7,10 +7,10 @@ import java.util.Collection;
 
 public class UserPrinciple implements UserDetails {
 
-    private Employee employee;
+    private AuthUser authUser;
 
-    public UserPrinciple(Employee employee){
-        this.employee=employee;
+    public UserPrinciple(AuthUser authUser){
+        this.authUser = authUser;
     }
 
     public UserPrinciple(){
@@ -18,17 +18,17 @@ public class UserPrinciple implements UserDetails {
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return employee.getRole().getAuthorities();
+        return authUser.getRole().getAuthorities();
     }
 
     @Override
     public String getPassword() {
-        return employee.getPassword();
+        return authUser.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return employee.getUsername();
+        return authUser.getUsername();
     }
 
     @Override
